@@ -7,7 +7,8 @@ use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Artisan;
 
-trait CreatesApplication {
+trait CreatesApplication
+{
 
     /**
      * Creates the application.
@@ -15,16 +16,11 @@ trait CreatesApplication {
      * @return Application
      * @throws \Exception
      */
-    public function createApplication(): Application {
-        $app = require __DIR__.'/../bootstrap/app.php';
+    public function createApplication(): Application
+    {
+        $app = require __DIR__ . '/../bootstrap/app.php';
 
         $app->make(Kernel::class)->bootstrap();
-
-        $result = Artisan::call('make:sqlite-db');
-
-        if ($result !== Command::SUCCESS) {
-            throw new \Exception('db not created');
-        }
 
         // конфиг, в какую бд мигрировать в файле phpunit.xml
         $result = Artisan::call('migrate');
