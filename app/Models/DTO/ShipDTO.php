@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\DTO;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\DTO\DTOInterface;
 
-class ShipDTO extends Model
+class ShipDTO implements DTOInterface
 {
 }

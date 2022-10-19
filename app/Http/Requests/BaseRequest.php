@@ -9,7 +9,7 @@ abstract class BaseRequest extends FormRequest
 {
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -20,7 +20,6 @@ abstract class BaseRequest extends FormRequest
     public function rules()
     {
         return [
-            'id' => ['required', 'numeric', 'existed:'],
         ];
     }
 

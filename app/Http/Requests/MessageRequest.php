@@ -30,8 +30,7 @@ class MessageRequest extends BaseRequest
         $validated = $this->validated();
 
         $messageDto = new MessageDTO();
-        $messageDto->setId($validated['id'])
-            ->setMessage($validated['message']);
+        $messageDto->setMessage($validated['message']);
 
         return $messageDto;
     }

@@ -2,7 +2,7 @@
 
 namespace App\Models\DTO;
 
-class MessageDTO extends BaseDTO
+class MessageDTO implements DTOInterface
 {
     protected string $message = '';
 
