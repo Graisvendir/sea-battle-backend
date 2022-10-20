@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Controller;
+namespace Tests\Feature\OnDB;
 
 use App\Models\Game;
 use App\Models\Ship;
@@ -8,33 +8,35 @@ use App\Rules\Ships\ShipOutOfRange;
 use App\Services\GameService;
 use Tests\TestCase;
 
-
-class FieldControllerTest extends TestCase {
-
+class FieldControllerTest extends TestCase
+{
     protected Game|null $game = null;
 
-    public function setUp(): void {
+    public function setUp(): void
+    {
         // без этого потяреюятся куча стартовых классов в сервис контейнере (например роутинг отвалится)
         // инфа отсюда https://laravel.com/docs/8.x/testing#creating-tests
         parent::setUp();
 
         // создаем игру, в которой будут прогоняться все автотесты
-        $this->game = $this->app->make(GameService::class)->create();
+        /** @var GameService $gameService */
+        $gameService = $this->app->make(GameService::class);
+        $this->game = $gameService->create();
     }
 
     /**
      * @dataProvider successDataProvider
      *
+     * @param $ships
      * @return void
      */
-    public function testPlaceShipCorrect($ships) {
+    public function testPlaceShipCorrect($ships): void
+    {
         $url = route('api.place-ships', ['id' => $this->game->id, 'code' => $this->game->creator->code]);
 
         $response = $this->postJson($url, $ships);
 
         $responseJson = $response->json();
-
-        echo("<pre>");print_r($responseJson);echo("</pre>"); // TODO remove
 
         $response->assertStatus(200);
         $this->assertTrue($responseJson['success']);
@@ -44,9 +46,11 @@ class FieldControllerTest extends TestCase {
     /**
      * @dataProvider shipOutOfRangeDataProvider
      *
+     * @param $ships
      * @return void
      */
-    public function testPlaceShipOutOfRange($ships) {
+    public function testPlaceShipOutOfRange($ships): void
+    {
         $url = route('api.place-ships', ['id' => $this->game->id, 'code' => $this->game->creator->code]);
 
         $response = $this->postJson($url, $ships);
@@ -61,7 +65,8 @@ class FieldControllerTest extends TestCase {
         $this->assertArrayHasKey(ShipOutOfRange::class, $responseJson['failedRules'][0]);
     }
 
-    public function successDataProvider(): array {
+    public function successDataProvider(): array
+    {
         return [
             'correct ship list' => $this->getCorrectShipList(),
             'correct ship list' => [
@@ -78,7 +83,8 @@ class FieldControllerTest extends TestCase {
         ];
     }
 
-    protected function getCorrectShipList(): array {
+    protected function getCorrectShipList(): array
+    {
         return [
             [
                 [
@@ -115,7 +121,8 @@ class FieldControllerTest extends TestCase {
         ];
     }
 
-    public function shipOutOfRangeDataProvider(): array {
+    public function shipOutOfRangeDataProvider(): array
+    {
         return [
             'ship out of range 1' => [
                 [
@@ -160,6 +167,4 @@ class FieldControllerTest extends TestCase {
 
         ];
     }
-
-
 }

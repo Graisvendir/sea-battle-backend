@@ -11,18 +11,19 @@ use JetBrains\PhpStorm\ArrayShape;
  * Class GameService
  * @package App\Services
  */
-class GameService {
+class GameService
+{
 
     const CREATE_ERROR = [
-        'httpCode'  => '400',
+        'httpCode' => '400',
         'errorCode' => 'CREATE_ERROR',
-        'message'   => 'Не удалось создать игру',
+        'message' => 'Не удалось создать игру',
     ];
 
     const UNEXPECTED_ERROR = [
-        'httpCode'  => '400',
+        'httpCode' => '400',
         'errorCode' => 'UNEXPECTED_ERROR',
-        'message'   => 'Непредвиденная ошибка',
+        'message' => 'Непредвиденная ошибка',
     ];
 
 
@@ -31,15 +32,16 @@ class GameService {
      *
      * @return Game|null
      */
-    public function create(): ?Game {
+    public function create(): ?Game
+    {
         try {
             $creator = User::createWithCode();
             $invited = User::createWithCode();
 
             $game = new Game();
-            $game->creator_id     = $creator->id;
+            $game->creator_id = $creator->id;
             $game->player_turn_id = $creator->id;
-            $game->invited_id     = $invited->id;
+            $game->invited_id = $invited->id;
 
             $status = GameStatus::whereCode('placement')->first();
 
@@ -57,7 +59,8 @@ class GameService {
         }
     }
 
-    public function status(): array {
+    public function status(): array
+    {
         $data = $this->short();
 
         if (!request()->get('short')) {
@@ -70,7 +73,8 @@ class GameService {
     #[ArrayShape([
         'game' => "array"
     ])]
-    public function short(): array {
+    public function short(): array
+    {
         return [
             'game' => [
                 'id' => 9,
@@ -86,7 +90,8 @@ class GameService {
         'fieldMy' => "\string[][]",
         'fieldEnemy' => "array"
     ])]
-    public function full(): array {
+    public function full(): array
+    {
         return [
             'fieldMy' => [
                 ['hidden'],

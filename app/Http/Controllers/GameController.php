@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use App\Services\GameService;
 use Illuminate\Http\JsonResponse;
 
-class GameController extends Controller {
+class GameController extends Controller
+{
 
     /**
      * @OA\Post(
@@ -40,13 +41,14 @@ class GameController extends Controller {
      *     )
      * )
      */
-    public function start(GameService $gameService): JsonResponse {
+    public function start(GameService $gameService): JsonResponse
+    {
         $game = $gameService->create();
 
         if ($game) {
             return response()->apiSuccess([
-                'id'     => $game->id,
-                'code'   => $game->creator->code,
+                'id' => $game->id,
+                'code' => $game->creator->code,
                 'invite' => $game->invited->code,
             ]);
         }
@@ -86,7 +88,8 @@ class GameController extends Controller {
      *     )
      * )
      */
-    public function ready(): JsonResponse {
+    public function ready(): JsonResponse
+    {
 
         return new JsonResponse([
             'success' => true
@@ -125,7 +128,8 @@ class GameController extends Controller {
      *     )
      * )
      */
-    public function shot(): JsonResponse {
+    public function shot(): JsonResponse
+    {
 
         return new JsonResponse([
             'success' => true
@@ -232,7 +236,8 @@ class GameController extends Controller {
      *     )
      * )
      */
-    public function status(GameService $gameService): JsonResponse {
+    public function status(GameService $gameService): JsonResponse
+    {
         return response()->apiSuccess($gameService->status());
     }
 }
