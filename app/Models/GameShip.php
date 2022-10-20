@@ -33,18 +33,19 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @mixin \Eloquent
  * @property-read \App\Models\Ship $ship
  */
-class GameShip extends Model {
-
+class GameShip extends Model
+{
     use HasFactory;
 
     protected $table = 'game_ships';
 
-    public function ship(): BelongsTo {
+    public function ship(): BelongsTo
+    {
         return $this->belongsTo(Ship::class, 'ship_id');
     }
 
-    public function getLength(): int {
+    public function getLength(): int
+    {
         return $this->ship->length;
     }
-
 }

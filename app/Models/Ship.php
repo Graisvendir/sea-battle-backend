@@ -7,9 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Класс типов кораблей.
- * 
+ *
  * Задает длину и максимальное количество на поле
- * 
+ *
  * App\Models\Ship
  *
  * @property int $id
@@ -27,17 +27,19 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Ship whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class Ship extends Model {
+class Ship extends Model
+{
 
     use HasFactory;
 
-    const VERTICAL_ORIENTATION   = 'vertical';
+    const VERTICAL_ORIENTATION = 'vertical';
     const HORIZONTAL_ORIENTATION = 'horizontal';
 
     protected $table = 'ships';
     protected static array $ships = [];
 
-    public static function getByLength(int $length): ?static {
+    public static function getByLength(int $length): ?static
+    {
         if (static::$ships) {
             return static::$ships[$length] ?: null;
         }

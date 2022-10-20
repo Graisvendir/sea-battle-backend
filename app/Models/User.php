@@ -45,15 +45,18 @@ class User extends Authenticatable
      */
     protected $fillable = ['id'];
 
-    public function createdGame(): HasOne {
+    public function createdGame(): HasOne
+    {
         return $this->hasOne(Game::class, 'creator_id');
     }
 
-    public function invitedGame(): HasOne {
+    public function invitedGame(): HasOne
+    {
         return $this->hasOne(Game::class, 'invited_id');
     }
 
-    public function game(): Game {
+    public function game(): Game
+    {
         return $this->createdGame ?: $this->invitedGame;
     }
 
@@ -63,7 +66,8 @@ class User extends Authenticatable
      * @return static
      * @throws \Throwable
      */
-    public static function createWithCode(): static {
+    public static function createWithCode(): static
+    {
         $user = new static();
         $user->code = Str::random();
         $user->saveOrFail();

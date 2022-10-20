@@ -10,19 +10,20 @@ use Illuminate\Contracts\Validation\Rule;
  * Валидация габаритов корабля.
  * Проверяем, что корабль со своей длиной влезает в поле
  */
-class ShipOutOfRange implements Rule {
-
+class ShipOutOfRange implements Rule
+{
     /**
      * Determine if the validation rule passes.
      *
-     * @param  string  $attribute
-     * @param  mixed  $value
+     * @param string $attribute
+     * @param mixed $value
      * @return bool
      */
-    public function passes($attribute, $value) {
-        $x           = (int) $value['x'];
-        $y           = (int) $value['y'];
-        $length      = (int) $value['length'] - 1; // считаем с 0
+    public function passes($attribute, $value)
+    {
+        $x = (int) $value['x'];
+        $y = (int) $value['y'];
+        $length = (int) $value['length'] - 1; // считаем с 0
         $orientation = $value['orientation'];
 
         if ($orientation === Ship::HORIZONTAL_ORIENTATION) {
@@ -39,7 +40,8 @@ class ShipOutOfRange implements Rule {
      *
      * @return string
      */
-    public function message() {
-        return 'Ship  out of range';
+    public function message()
+    {
+        return 'Ship out of range';
     }
 }
