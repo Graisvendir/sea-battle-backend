@@ -9,12 +9,18 @@ use Exception;
  *
  * Все ожидаемые ошибки будут возвращены пользователю
  */
-class PlannedException extends Exception {
-
+class BaseException extends Exception
+{
     protected int $httpCode = 422;
+    protected array $exceptionData = [];
 
-    public function getHttpCode(): int {
+    public function getHttpCode(): int
+    {
         return $this->httpCode;
     }
 
+    public function getExceptionData(): array
+    {
+        return $this->exceptionData;
+    }
 }

@@ -34,27 +34,29 @@ class Handler extends ExceptionHandler
      *
      * @return void
      */
-    public function register() {
+    public function register()
+    {
+        // Обработка всех BaseException внутри лары. Всегда приводит его в json и отдает как ошибку ниже 500 кода
+        $this->renderable(function (BaseException $e, Request $request) {
+            $data = [
+                'errorCode' => $e->getCode(),
+                'message'   => $e->getMessage(),
+            ];
 
-        // Обработка всех PlannedException внутри лары. Всегда приводит его в json и отдает как ошибку ниже 500 кода
-        $this->renderable(function (PlannedException $e, Request $request) {
-            return response()->apiError([
-                'error'   => $e->getCode(),
-                'message' => $e->getMessage(),
-            ], $e->getHttpCode());
+            if ($e->getExceptionData()) {
+                $data['exceptionData'] = $e->getExceptionData();
+            }
+
+            return response()->apiError($data, $e->getHttpCode());
         });
 
         // Отдельно обрабатываем ValidationException, т.к. список сообщений об ошибках достается другим методом
         $this->renderable(function (ValidationException $e, Request $request) {
             $data = [
-                'error'   => $e->getCode(),
-                'message' => $e->errors(),
+                'errorCode' => $e->getCode(),
+                'message'   => $e->errors(),
+                'errors'    => $e->validator->failed(),
             ];
-
-            // в тестовом окружении добавляем названия правил валидации, на которых валидация упала
-            if ($this->isTestEnv()) {
-                $data['failedRules'] = $e->validator->failed();
-            }
 
             return response()->apiError($data, 422);
         });
@@ -62,22 +64,23 @@ class Handler extends ExceptionHandler
         // Обработка всех Exception внутри лары. Всегда приводит его в json и отдает как ошибку 500 и выше
         $this->renderable(function (Exception $e, Request $request) {
             $data = [
-                'error'       => $e->getCode(),
-                'message'     => $e->getMessage(),
+                'errorCode' => $e->getCode(),
+                'message'   => $e->getMessage(),
             ];
 
             // в тестовом окружении добавляем названия правил валидации, на которых упал код
             if ($this->isTestEnv()) {
-                $data['errorClass']    = $e::class;
+                $data['errorClass'] = $e::class;
                 $data['errorPosition'] = $e->getFile() . '   ' . $e->getLine();
-                $data['trace']         = $e->getTraceAsString();
+                $data['trace'] = $e->getTraceAsString();
             }
 
             return response()->apiError($data);
         });
     }
 
-    public function isTestEnv(): bool {
+    public function isTestEnv(): bool
+    {
         return env('APP_ENV') === 'testing';
     }
 }
