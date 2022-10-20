@@ -23,5 +23,5 @@ abstract class BaseRequest extends FormRequest
         ];
     }
 
-    abstract public function validatedObject(): DTOInterface;
+    abstract public function validatedDTO(): DTOInterface;
 }

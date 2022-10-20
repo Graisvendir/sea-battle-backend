@@ -92,7 +92,7 @@ class ChatController extends Controller
      */
     public function send(MessageRequest $request, GameMessage $messageModel, GameService $gameService): JsonResponse
     {
-        $messageDto = $request->validatedObject();
+        $messageDto = $request->validatedDTO();
 
         try {
             /** @var User $user */

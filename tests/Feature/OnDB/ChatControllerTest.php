@@ -4,6 +4,7 @@ namespace Tests\Feature\OnDB;
 
 use App\Models\Game;
 use App\Services\GameService;
+use Illuminate\Testing\Fluent\AssertableJson;
 use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
 
@@ -27,11 +28,23 @@ class ChatControllerTest extends TestCase
     {
         $response = $this->sendMessage();
 
+        $response->assertStatus(200);
         $responseJson = $response->json();
 
-        $response->assertStatus(200);
-
         $this->assertTrue($responseJson['success']);
+    }
+
+    public function testSendError(): void
+    {
+        $url = route('api.chat.send', ['id' => $this->game->id, 'code' => $this->game->creator->code]);
+
+        $response = $this->postJson($url, ['message' => '']);
+        $response->assertStatus(422);
+        $response
+            ->assertJson(fn (AssertableJson $json) =>
+                $json->where('success', false)
+                    ->hasAll(['errorCode', 'message', 'errors'])
+            );
     }
 
     public function testLoadSuccess(): void

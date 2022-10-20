@@ -25,7 +25,7 @@ class MessageRequest extends BaseRequest
         ];
     }
 
-    public function validatedObject(): MessageDTO
+    public function validatedDTO(): MessageDTO
     {
         $validated = $this->validated();
 
