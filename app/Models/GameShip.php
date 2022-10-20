@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Exceptions\Ship\ShipLengthNotFoundException;
+use App\Models\DTO\Ships\ShipDTO;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -38,6 +40,25 @@ class GameShip extends Model
     use HasFactory;
 
     protected $table = 'game_ships';
+
+    public static function make(ShipDTO $shipDTO): static
+    {
+        $shipId = Ship::getByLength($shipDTO->getLenght());
+
+        if (!$shipId) {
+            throw ShipLengthNotFoundException::make($shipDTO->getLenght());
+        }
+
+        $gameShip = new GameShip();
+        $gameShip->id = $shipDTO->getId();
+        $gameShip->x = $shipDTO->getX();
+        $gameShip->y = $shipDTO->getY();
+        $gameShip->orientation = $shipDTO->getOrientation();
+
+        $gameShip->ship_id = $shipId;
+
+        return $gameShip;
+    }
 
     public function ship(): BelongsTo
     {

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\Game\NotFoundPlacementStatusException;
 use App\Models\Game;
 use App\Models\GameStatus;
 use App\Models\User;
@@ -31,32 +32,30 @@ class GameService
      * Создание новой игры с созданием пользователей
      *
      * @return Game|null
+     * @throws NotFoundPlacementStatusException
+     * @throws \Throwable
      */
     public function create(): ?Game
     {
-        try {
-            $creator = User::createWithCode();
-            $invited = User::createWithCode();
+        $creator = User::createWithCode();
+        $invited = User::createWithCode();
 
-            $game = new Game();
-            $game->creator_id = $creator->id;
-            $game->player_turn_id = $creator->id;
-            $game->invited_id = $invited->id;
+        $game = new Game();
+        $game->creator_id = $creator->id;
+        $game->player_turn_id = $creator->id;
+        $game->invited_id = $invited->id;
 
-            $status = GameStatus::whereCode('placement')->first();
+        $status = GameStatus::whereCode('placement')->first();
 
-            if (!$status) {
-                return null;
-            }
-
-            $game->status_id = $status->id;
-
-            $game->saveOrFail();
-
-            return $game;
-        } catch (\Throwable $e) {
-            return null;
+        if (!$status) {
+            throw new NotFoundPlacementStatusException();
         }
+
+        $game->status_id = $status->id;
+
+        $game->saveOrFail();
+
+        return $game;
     }
 
     public function status(): array

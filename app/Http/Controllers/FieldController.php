@@ -31,26 +31,31 @@ class FieldController extends Controller
      *             type="string"
      *         )
      *     ),
+     *
      *     @OA\RequestBody(
      *         description="Список размещаемых кораблей в формате json",
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
-     *                 type="array",
-     *                 @OA\Items(
-     *                     type="object",
-     *                     @OA\Property(
-     *                         property="x",
-     *                         description="Позиция по горизонтали",
-     *                         type="integer"
-     *                     ),
-     *                     @OA\Property(
-     *                         property="y",
-     *                         description="Позиция по вертикали",
-     *                         type="integer"
-     *                     ),
-     *                     @OA\Property(
-     *                         property="id",
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="ships",
+     *                     description="Список кораблей",
+     *                     type="array",
+         *     @OA\Items(
+         *                     type="object",
+         *                     @OA\Property(
+         *                         property="x",
+         *                         description="Позиция по горизонтали",
+         *                         type="integer"
+         *                     ),
+         *                     @OA\Property(
+         *                         property="y",
+         *                         description="Позиция по вертикали",
+         *                         type="integer"
+         *                     ),
+         *                     @OA\Property(
+         *                         property="id",
      *                         description="<Номер корабля>",
      *                         type="integer",
      *                         example="1"
@@ -68,6 +73,7 @@ class FieldController extends Controller
      *                         example="horizontal"
      *                     ),
      *                 )
+     *                 )
      *             )
      *         )
      *     ),
@@ -80,15 +86,15 @@ class FieldController extends Controller
      *         description="Не удалось установить корабль(и)"
      *     ),
      * )
-     * @throws \App\Exceptions\ShipsIntersectsException
+     * @throws \App\Exceptions\Ship\ShipsIntersectsException
      */
     public function placeShips(PlaceShipsRequest $request, FieldService $fieldService): JsonResponse
     {
-        $validated = $request->validated();
+        $validated = $request->validatedDTO();
 
         $fieldService->placeShips($validated);
 
-        return response()->apiSuccess($validated);
+        return response()->apiSuccess();
     }
 
     /**

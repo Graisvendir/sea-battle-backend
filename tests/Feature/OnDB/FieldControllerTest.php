@@ -69,17 +69,6 @@ class FieldControllerTest extends TestCase
     {
         return [
             'correct ship list' => $this->getCorrectShipList(),
-            'correct ship list' => [
-                [
-                    [
-                        'id' => 1,
-                        'x' => 5,
-                        'y' => 5,
-                        'length' => 2,
-                        'orientation' => Ship::HORIZONTAL_ORIENTATION,
-                    ],
-                ]
-            ],
         ];
     }
 
