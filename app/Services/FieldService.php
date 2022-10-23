@@ -2,13 +2,13 @@
 
 namespace App\Services;
 
-use App\Exceptions\Ship\ShipLengthNotFoundException;
 use App\Exceptions\Ship\ShipsIntersectsException;
 use App\Models\DTO\Ships\PlaceShipDTO;
 use App\Models\DTO\Ships\ShipDTO;
 use App\Models\Game;
 use App\Models\GameShip;
 use App\Models\Ship;
+use App\Models\User;
 use Illuminate\Support\Collection;
 use Illuminate\Http\Request;
 use Exception;
@@ -18,18 +18,19 @@ use Exception;
  */
 class FieldService
 {
-
     protected Game $game;
+    protected User $user;
 
     /**
      * @var Collection|GameShip[]
      */
-    protected Collection $ships;
+    protected Collection $gameShipsById;
 
     public function __construct(Request $request)
     {
+        $this->user = $request->user();
         $this->game = $request->user()->game();
-        $this->ships = $this->game->ships->collect();
+        $this->gameShipsById = $this->game->ships->keyBy('id');
     }
 
     /**
@@ -43,37 +44,42 @@ class FieldService
     {
         $postShips = $placeShipDTO->getShips();
 
-        $existShipsById = $this->ships->keyBy('id');
-
         foreach ($postShips as $postShip) {
-            if ($postShip->getId()) {
-                // значит, уже существующий корабль двигают. Подставляем данные в уже существующий корабль
-                /** @var GameShip $existShip */
-                $existShip = $existShipsById->get($postShip->getId());
+            $this->placeShip($postShip);
+        }
+    }
 
-                $existShip->x = $postShip->getX();
-                $existShip->y = $postShip->getY();
-                $existShip->orientation = $postShip->getOrientation();
+    public function placeShip(ShipDTO $gameShipDTO): void
+    {
+        if ($gameShipDTO->getId()) {
+            // значит, уже существующий корабль двигают. Подставляем данные в уже существующий корабль
+            /** @var GameShip $existShip */
+            $existShip = $this->gameShipsById->get($gameShipDTO->getId());
 
-                if ($existShip->isDirty()) {
-                    $existShip->saveOrFail();
-                }
+            $existShip->x = $gameShipDTO->getX();
+            $existShip->y = $gameShipDTO->getY();
+            $existShip->orientation = $gameShipDTO->getOrientation();
 
-                continue;
+            if ($existShip->isDirty()) {
+                $existShip->saveOrFail();
             }
 
-            $existShip = GameShip::make($postShip);
-            $existShip->saveOrFail();
-
-            $this->ships->push($existShip);
+            return;
         }
+
+        $newShip = GameShip::make($gameShipDTO);
+        $newShip->game_id = $this->game->id;
+        $newShip->user_id = $this->user->id;
+        $newShip->saveOrFail();
+
+        $this->gameShipsById->push($newShip);
     }
 
     public function getCurrentFieldMatrix(): array
     {
         $matrix = [];
 
-        foreach ($this->ships as $ship) {
+        foreach ($this->gameShipsById as $ship) {
             // +1 чтобы не выйти за границы массива при заполнении соседни клеток корабля
             $x = $ship->x + 1;
             $y = $ship->y + 1;

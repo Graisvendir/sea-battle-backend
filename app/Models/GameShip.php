@@ -41,21 +41,21 @@ class GameShip extends Model
 
     protected $table = 'game_ships';
 
-    public static function make(ShipDTO $shipDTO): static
+    public static function make(ShipDTO $gameShipDTO): static
     {
-        $shipId = Ship::getByLength($shipDTO->getLenght());
+        $ship = Ship::getByLength($gameShipDTO->getLenght());
 
-        if (!$shipId) {
-            throw ShipLengthNotFoundException::make($shipDTO->getLenght());
+        if (!$ship) {
+            throw ShipLengthNotFoundException::make($gameShipDTO->getLenght());
         }
 
         $gameShip = new GameShip();
-        $gameShip->id = $shipDTO->getId();
-        $gameShip->x = $shipDTO->getX();
-        $gameShip->y = $shipDTO->getY();
-        $gameShip->orientation = $shipDTO->getOrientation();
+        $gameShip->id = $gameShipDTO->getId();
+        $gameShip->x = $gameShipDTO->getX();
+        $gameShip->y = $gameShipDTO->getY();
+        $gameShip->orientation = $gameShipDTO->getOrientation();
 
-        $gameShip->ship_id = $shipId;
+        $gameShip->ship_id = $ship->id;
 
         return $gameShip;
     }
