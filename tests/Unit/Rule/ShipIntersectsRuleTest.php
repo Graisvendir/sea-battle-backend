@@ -11,27 +11,37 @@ class ShipIntersectsRuleTest extends TestCase
     /**
      * @dataProvider successDataProvider
      *
+     * @param array $matrix
+     * @param array $ships
      * @return void
      */
     public function testSuccess(array $matrix, array $ships): void
     {
         $shipsIntersectsRule = new ShipsIntersectsRule($matrix);
-        $success = $shipsIntersectsRule->passes('', $ships);
 
-        $this->assertTrue($success);
+        foreach ($ships as $ship) {
+            $success = $shipsIntersectsRule->passes('', $ship);
+
+            $this->assertTrue($success);
+        }
     }
 
     /**
      * @dataProvider errorDataProvider
      *
+     * @param array $matrix
+     * @param array $ships
      * @return void
      */
-    public function testError(array $matrix, array $ships)
+    public function testError(array $matrix, array $ships): void
     {
         $shipsIntersectsRule = new ShipsIntersectsRule($matrix);
-        $success = $shipsIntersectsRule->passes('', $ships);
 
-        $this->assertFalse($success);
+        foreach ($ships as $ship) {
+            $success = $shipsIntersectsRule->passes('', $ship);
+
+            $this->assertFalse($success);
+        }
     }
 
     public function successDataProvider(): array
@@ -69,9 +79,9 @@ class ShipIntersectsRuleTest extends TestCase
         return [
             'simple' => [
                 [
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ],
-                    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, ],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ],
+                    [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, ],
+                    [1, 2, 1, 0, 0, 0, 0, 0, 0, 0, ],
+                    [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, ],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ],
@@ -83,7 +93,6 @@ class ShipIntersectsRuleTest extends TestCase
                 ],
                 [
                     [
-                        'id' => 1,
                         'x' => 1,
                         'y' => 1,
                         'length' => 2,
