@@ -24,11 +24,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // https://laravel.com/docs/8.x/responses#response-macros
+        // https://laravel.com/docs/9.x/responses#response-macros
         // Теперь можно пользоваться response()->apiSuccess([]) в контроллерах
         Response::macro('apiSuccess', function (array $jsonData = []) {
             $jsonData['success'] = true;
-            
+
             return Response::json($jsonData);
         });
 

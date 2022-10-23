@@ -7,7 +7,6 @@ use Illuminate\Http\JsonResponse;
 
 class GameController extends Controller
 {
-
     /**
      * @OA\Post(
      *     path="/api/start",
@@ -45,15 +44,11 @@ class GameController extends Controller
     {
         $game = $gameService->create();
 
-        if ($game) {
-            return response()->apiSuccess([
-                'id' => $game->id,
-                'code' => $game->creator->code,
-                'invite' => $game->invited->code,
-            ]);
-        }
-
-        return response()->apiError($gameService::CREATE_ERROR);
+        return response()->apiSuccess([
+            'id' => $game->id,
+            'code' => $game->creator->code,
+            'invite' => $game->invited->code,
+        ]);
     }
 
     /**

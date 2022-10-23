@@ -7,7 +7,6 @@ use App\Http\Resources\MessageResource;
 use App\Models\Game;
 use App\Models\GameMessage;
 use App\Models\User;
-use App\Services\GameService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -90,22 +89,18 @@ class ChatController extends Controller
      *     )
      * )
      */
-    public function send(MessageRequest $request, GameMessage $messageModel, GameService $gameService): JsonResponse
+    public function send(MessageRequest $request, GameMessage $messageModel): JsonResponse
     {
         $messageDto = $request->validatedDTO();
 
-        try {
-            /** @var User $user */
-            $user = $request->user();
+        /** @var User $user */
+        $user = $request->user();
 
-            $messageModel->message = $messageDto->getMessage();
-            $messageModel->user_id = $user->id;
-            $messageModel->game_id = $user->game()->id;
+        $messageModel->message = $messageDto->getMessage();
+        $messageModel->user_id = $user->id;
+        $messageModel->game_id = $user->game()->id;
 
-            $messageModel->saveOrFail();
-        } catch (\Throwable $e) {
-            return response()->apiError($gameService::UNEXPECTED_ERROR);
-        }
+        $messageModel->saveOrFail();
 
         return response()->apiSuccess([]);
     }

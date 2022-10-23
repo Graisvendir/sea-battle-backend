@@ -14,20 +14,6 @@ use JetBrains\PhpStorm\ArrayShape;
  */
 class GameService
 {
-
-    const CREATE_ERROR = [
-        'httpCode' => '400',
-        'errorCode' => 'CREATE_ERROR',
-        'message' => 'Не удалось создать игру',
-    ];
-
-    const UNEXPECTED_ERROR = [
-        'httpCode' => '400',
-        'errorCode' => 'UNEXPECTED_ERROR',
-        'message' => 'Непредвиденная ошибка',
-    ];
-
-
     /**
      * Создание новой игры с созданием пользователей
      *
