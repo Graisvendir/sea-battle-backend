@@ -20,9 +20,11 @@ class PlaceShipsRequest extends BaseRequest
         /** @var FieldService $fieldService */
         $fieldService = $this->container->get(FieldService::class);
 
-        $shipIntersectsRule = new ShipsIntersectsRule($fieldService->getCurrentFieldMatrix());
+        $curFieldMatrix = $fieldService->getCurrentFieldMatrix();
+        $shipIntersectsRule = new ShipsIntersectsRule($curFieldMatrix);
 
         return [
+            'ships' => ['required', 'array'],
             'ships.*' => ['required', 'array', new ShipOutOfRange(), $shipIntersectsRule],
 
             'ships.*.x'           => ['integer', 'min:0', 'max:' . Game::FIELD_MAX_HORIZONTAL_LENGTH],
