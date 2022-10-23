@@ -2,9 +2,11 @@
 
 namespace Tests\Feature\Mock;
 
+use App\Exceptions\Handler;
 use App\Models\Game;
 use App\Models\User;
 use App\Services\GameService;
+use Illuminate\Testing\Fluent\AssertableJson;
 use Mockery;
 use Tests\TestCase;
 
@@ -33,11 +35,11 @@ class GameControllerTest extends TestCase
 
         $response->assertStatus(200);
 
-        $this->assertTrue($responseJson['success']);
-        $this->assertArrayNotHasKey('httpCode', $responseJson);
-        $this->assertArrayHasKey('id', $responseJson);
-        $this->assertArrayHasKey('code', $responseJson);
-        $this->assertArrayHasKey('invite', $responseJson);
+        $response->assertJson(fn (AssertableJson $json) =>
+            $json->where('success', true)
+                ->hasAll(['id', 'code', 'invite'])
+                ->etc()
+        );
     }
 
     public function testStartError()
@@ -50,14 +52,13 @@ class GameControllerTest extends TestCase
 
         $url = route('api.start');
         $response = $this->postJson($url);
-        $responseJson = $response->json();
 
         $response->assertStatus(400);
 
-        $this->assertFalse($responseJson['success']);
-
-        $this->assertArrayHasKey('httpCode', $responseJson);
-        $this->assertArrayHasKey('errorCode', $responseJson);
-        $this->assertArrayHasKey('message', $responseJson);
+        $response->assertJson(fn (AssertableJson $json) =>
+            $json->where('success', false)
+                ->hasAll([Handler::ERROR_CODE_KEY, Handler::MESSAGE_KEY])
+                ->etc()
+        );
     }
 }
