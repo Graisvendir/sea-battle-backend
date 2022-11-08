@@ -37,14 +37,24 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder|Game whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Game whereStatusId($value)
  * @mixin \Eloquent
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\GameShip[] $creatorShips
+ * @property-read int|null $creator_ships_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\GameShip[] $invitedShips
+ * @property-read int|null $invited_ships_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\GameShot[] $creatorShots
+ * @property-read int|null $creator_shots_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\GameShot[] $invitedShots
+ * @property-read int|null $invited_shots_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\GameShot[] $shots
+ * @property-read int|null $shots_count
  */
-class Game extends Model {
-
+class Game extends Model
+{
     use HasFactory;
 
     // Позиция кораблей считается с 0
     const FIELD_MAX_HORIZONTAL_LENGTH = 10;
-    const FIELD_MAX_VERTICAL_LENGTH   = 10;
+    const FIELD_MAX_VERTICAL_LENGTH = 10;
 
     protected $table = 'games';
 
@@ -55,19 +65,66 @@ class Game extends Model {
      */
     protected $fillable = ['id'];
 
-    public function creator(): BelongsTo {
+    public function creator(): BelongsTo
+    {
         return $this->belongsTo(User::class, 'creator_id');
     }
 
-    public function invited(): BelongsTo {
+    public function invited(): BelongsTo
+    {
         return $this->belongsTo(User::class, 'invited_id');
     }
 
-    public function status(): BelongsTo {
+    public function status(): BelongsTo
+    {
         return $this->belongsTo(GameStatus::class, 'status_id');
     }
 
-    public function ships(): HasMany {
+    public function ships(): HasMany
+    {
         return $this->hasMany(GameShip::class, 'game_id');
+    }
+
+    public function creatorShips(): HasMany
+    {
+        return $this->ships()->where('user_id', $this->creator_id);
+    }
+
+    public function invitedShips(): HasMany
+    {
+        return $this->ships()->where('user_id', $this->invited_id);
+    }
+
+    public function getShipsByUserId(int $userId)
+    {
+        return match ($userId) {
+            $this->creator_id => $this->creatorShips,
+            $this->invited_id => $this->invitedShips,
+            default => collect()
+        };
+    }
+
+    public function shots(): HasMany
+    {
+        return $this->hasMany(GameShot::class, 'game_id');
+    }
+
+    public function creatorShots(): HasMany
+    {
+        return $this->shots()->where('user_id', $this->creator_id);
+    }
+
+    public function invitedShots(): HasMany
+    {
+        return $this->shots()->where('user_id', $this->invited_id);
+    }
+
+    public function getShotsByUserId(int $userId)
+    {
+        return match ($userId) {
+            $this->creator_id => $this->creatorShots,
+            $this->invited_id => $this->invitedShots,
+            default => collect()
+        };
     }
 }

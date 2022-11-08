@@ -5,12 +5,9 @@ namespace App\Services;
 use App\Exceptions\Ship\ShipsIntersectsException;
 use App\Models\DTO\Ships\PlaceShipDTO;
 use App\Models\DTO\Ships\ShipDTO;
-use App\Models\Game;
 use App\Models\GameShip;
 use App\Models\Ship;
-use App\Models\User;
 use Illuminate\Support\Collection;
-use Illuminate\Http\Request;
 use Exception;
 
 /**
@@ -18,19 +15,14 @@ use Exception;
  */
 class FieldService
 {
-    protected Game $game;
-    protected User $user;
-
     /**
      * @var Collection|GameShip[]
      */
     protected Collection $gameShipsById;
 
-    public function __construct(Request $request)
+    public function __construct(protected GameService $gameService)
     {
-        $this->user = $request->user();
-        $this->game = $request->user()->game();
-        $this->gameShipsById = $this->game->ships->keyBy('id');
+        $this->gameShipsById = $this->gameService->getCurrent()->ships->keyBy('id');
     }
 
     /**
@@ -68,8 +60,8 @@ class FieldService
         }
 
         $newShip = GameShip::make($gameShipDTO);
-        $newShip->game_id = $this->game->id;
-        $newShip->user_id = $this->user->id;
+        $newShip->game_id = $this->gameService->getCurrent()->id;
+        $newShip->user_id = $this->gameService->getCurrent()->id;
         $newShip->saveOrFail();
 
         $this->gameShipsById->push($newShip);

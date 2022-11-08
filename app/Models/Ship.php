@@ -7,9 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Класс типов кораблей.
- *
+ * 
  * Задает длину и максимальное количество на поле
- *
+ * 
  * App\Models\Ship
  *
  * @property int $id

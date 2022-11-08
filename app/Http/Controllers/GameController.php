@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\GameResource;
 use App\Services\GameService;
 use Illuminate\Http\JsonResponse;
 
@@ -233,6 +234,6 @@ class GameController extends Controller
      */
     public function status(GameService $gameService): JsonResponse
     {
-        return response()->apiSuccess($gameService->status());
+        return response()->apiSuccess(GameResource::make($gameService->getCurrent()));
     }
 }

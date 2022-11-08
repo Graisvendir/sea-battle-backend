@@ -6,7 +6,7 @@ use App\Exceptions\Game\NotFoundPlacementStatusException;
 use App\Models\Game;
 use App\Models\GameStatus;
 use App\Models\User;
-use JetBrains\PhpStorm\ArrayShape;
+use Illuminate\Http\Request;
 
 /**
  * Class GameService
@@ -14,6 +14,20 @@ use JetBrains\PhpStorm\ArrayShape;
  */
 class GameService
 {
+    protected Game $game;
+    protected User $user;
+
+    public function __construct(Request $request)
+    {
+        $this->user = $request->user();
+        $this->game = $request->user()->game();
+    }
+
+    public function getCurrent(): ?Game
+    {
+        return $this->game;
+    }
+
     /**
      * Создание новой игры с созданием пользователей
      *
@@ -53,35 +67,5 @@ class GameService
         }
 
         return $data;
-    }
-
-    #[ArrayShape([
-        'game' => "array"
-    ])]
-    public function short(): array
-    {
-        return [
-            'game' => [
-                'id' => 9,
-                'status' => 1,
-                'invite' => 'gerwhwqet',
-                'myTurn' => false,
-                'meReady' => true,
-            ],
-        ];
-    }
-
-    #[ArrayShape([
-        'fieldMy' => "\string[][]",
-        'fieldEnemy' => "array"
-    ])]
-    public function full(): array
-    {
-        return [
-            'fieldMy' => [
-                ['hidden'],
-            ],
-            'fieldEnemy' => [],
-        ];
     }
 }
